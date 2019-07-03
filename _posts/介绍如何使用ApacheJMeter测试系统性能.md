@@ -1,5 +1,5 @@
 ---
-title: 介绍怎样使用Apache JMeter测试性能
+title: 介绍如何使用Apache JMeter测试系统性能
 date: 2019-07-02 15:54:00
 tags:
 - JMeter
@@ -80,7 +80,7 @@ JMeter™是Apache基金会的一款纯Java开源软件，它最初是为测试W
 
 # 实战
 
-以下是在JMeter单点环境下试验得出的结论，后续我会再单独介绍如何《使用JMeter分布式压测》。
+以下是在JMeter单点环境下试验得出的结论，后续我会再单独介绍《如何使用JMeter分布式压测》。
 
 ## 压测WEB应用
 
@@ -94,19 +94,19 @@ JMeter™是Apache基金会的一款纯Java开源软件，它最初是为测试W
 
 在线程组下面添加 `HTTP Request Defaults` ，也就是对本次请求的公共参数进行设置，这样后续的请求不用重复设置相同的参数。
 
-![](/images/)
+![](/images/jmeter_create_http_request_defaults.gif)
 
 浏览器在访问某个网站时会启用cookie管理功能，我们也尝试着添加 `HTTP Cookie Manager` 以启动cookie。并不需要作特别的配置只要添加在线程组下面就可以生效。
 
-![](/images/)
+![](/images/jmeter_create_http_cookie.gif)
 
 接下来配置你要请求的链接，在这里应该是网站首页，即 `http://example.com/`，由于我们在 `HTTP Request Defaults` 中添加了域名信息，此时只需要在Path参数处填写 `/`。
 
-![](/images/)
+![](/images/jmeter_create_http_request.gif)
 
 压测之后肯定想看看结果怎么样，所以我们接着添加Listener，在这里我添加的是 `Graph Results` 和 `Aggregate Report`。
 
-![](/images/)
+![](/images/jmeter_create_listener.gif)
 
 ### 2. 运行计划
 
@@ -120,39 +120,76 @@ JMeter™是Apache基金会的一款纯Java开源软件，它最初是为测试W
 
 由于我们在测试计划中添加了Listener，所以可以在那两个计划中单击查看报告详情，报告是可以保存到指定文件中的。
 
-![](/images/)
+![](/images/jmeter_result.gif)
+
+在测试过程中可以看到实时报告，最终报告上表明该网站QPS在13左右。
+
+### 本部分小结
+
+事实上在实际项目中，可能一次压测计划会包含多个请求，因为仅压单一页面不能很准确的反映系统真实性能，一般会以某个业务场景为单位来实施。比如压测注册功能，那包含访问到注册页面、填写相关信息，调用接口实时校验这些信息，最后再提交表单。通过这样一个场景的压测，可以很真实的反映出这个系统最大可以并发支持多少用户注册。
+
+在上面的案例中不再是简单的请求某个页面，还需要提交数据，这些数据的来源可以随机也可以来自某份文件。那这些配置都可以在官方文档上找到，本文没有对这些进行详细的介绍。
+
+有一些有用的官方示例介绍：
+1. [怎样登录一个网站](https://jmeter.apache.org/usermanual/build-web-test-plan.html#logging_in)
+1. [使用URL重写处理用户会话](https://jmeter.apache.org/usermanual/build-adv-web-test-plan.html#session_url_rewriting)
 
 ## 在Linux环境下执行测试计划
 
-JMeter可以在Linux环境下以命令行（CLI）模式运行，将上面的测试计划保存成 `` 文件，并将这个文件上传到服务器上。
+JMeter可以在Linux环境下以命令行（CLI）模式运行，将上面的测试计划保存成 `test_plan.jmx` 文件，并将这个文件上传到服务器上。
 
 像下面这样启动JMeter并执行指定测试计划：
 
 ```bash
+./bin/jmeter -n -t /tmp/test_plan.jmx
 
-
+# 选项n表示不以GUI模式启动，t表示指定测试计划
 ```
 
-## JDBC
+如果你想看到测试报告，可以在添加每个Listener时指定写入文件，像下面这样：
 
+![](/images/jmeter_write_file.jpg)
 
+这样当计划执行完成后会把报表写入你指定的文件中。
 
+## 压测ElasticSearch性能
 
+测试目标：压测某机器配置下ES集群的读写性能。
 
+### 思路
 
+基准测试应当以最简单的操作进行，尽量减少由于外部因素干扰。下面规划了两种基本操作：
 
+1. 写
+```bash
+POST test/_doc
+{
+  "name": 1
+}
+```
+1. 精确搜索
+```bash
+POST test/_search
+{
+  "query": {
+    "term": {
+      "name": {
+        "value": 1
+      }
+    }
+  }
+}
+```
 
+### 构建测试计划
 
+1. 添加 `Add => Config Element => HTTP Header Manager` 并设置Content-Type为application/json，这一步很重要。
+1. 添加 `Add => Config Element => HTTP Request Defaults` 
+1. 之后再添加两个请求以及报告，方法同上面，这里不再赘述。
 
+### 运行计划
 
-
-
-
-
-
-
-
-
+执行计划方法同上。在压测过程中可以不断调整压力，直到达到被测系统性能瓶颈，注意同时还要关注CPU、内存、磁盘以及带宽的使用情况。
 
 
 ---
