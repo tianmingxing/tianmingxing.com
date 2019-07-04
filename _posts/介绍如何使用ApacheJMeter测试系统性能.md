@@ -46,7 +46,7 @@ JMeter™是Apache基金会的一款纯Java开源软件，它最初是为测试W
   # it will be sourced in by bin/jmeter
 
   # Use a bigger heap, but a smaller metaspace, than the default
-  export HEAP="-Xms1G -Xmx1G -XMaxMetaspaceSize=192m"
+  export HEAP="-Xms1G -Xmx1G -XX:MaxMetaspaceSize=192m"
 
   # Try to guess the locale from the OS. The space as value is on purpose!
   export JMETER_LANGUAGE=" "
