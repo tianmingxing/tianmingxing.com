@@ -124,6 +124,20 @@ JMeter™是Apache基金会的一款纯Java开源软件，它最初是为测试W
 
 在测试过程中可以看到实时报告，最终报告上表明该网站QPS在13左右。
 
+#### 生成可视化HTML报告
+
+![](/images/jmeter_report_html.jpg)
+
+要生成上面更加友好的报告也很简单，思路是先生成csv文件，然后通过对这份文件的分析处理，最后自动生成HTML呈现的报告。
+
+1. 在测试计划中添加两个Listener `Summary Report`， `Simple Data Writer`。
+1. 分别设置csv文件的保存位置（设置相同的文件），例如 `F:\jmx\jmeter_report.csv`。
+1. 打开 `bin/reportgenerator.properties` 文件复制全部内容追加到 `bin/user.properties` 文件中。
+1. 运行测试计划。
+1. 可以检查你设置的csv文件是否有生成。
+1. 执行命令 `jmeter -g F:\jmx\jmeter_report.csv -o F:\jmx\report`，按照你的实际情况修改文件路径。
+1. 检查在 `F:\jmx\report` 中是否生成了一堆文件，找到 `index.html` 并打开它。
+
 ### 本部分小结
 
 事实上在实际项目中，可能一次压测计划会包含多个请求，因为仅压单一页面不能很准确的反映系统真实性能，一般会以某个业务场景为单位来实施。比如压测注册功能，那包含访问到注册页面、填写相关信息，调用接口实时校验这些信息，最后再提交表单。通过这样一个场景的压测，可以很真实的反映出这个系统最大可以并发支持多少用户注册。
@@ -143,14 +157,14 @@ JMeter可以在Linux环境下以命令行（CLI）模式运行，将上面的测
 ```bash
 ./bin/jmeter -n -t /tmp/test_plan.jmx
 
-# 选项n表示不以GUI模式启动，t表示指定测试计划
+# 选项n表示不以GUI模式启动，t表示指定测试计划文件
 ```
 
 如果你想看到测试报告，可以在添加每个Listener时指定写入文件，像下面这样：
 
 ![](/images/jmeter_write_file.jpg)
 
-这样当计划执行完成后会把报表写入你指定的文件中。
+这样当计划执行完成后会把报表写入你指定的文件中，之后可以用上面介绍的方法基于csv文件生成HTML形式的报告。
 
 ## 压测ElasticSearch性能
 
