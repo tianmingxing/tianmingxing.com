@@ -141,6 +141,12 @@ user	0m10.680s
 sys	0m0.001s
 ```
 
+如果以普通用户执行上面命令，可能会提示权限不足等一些问题，此时可以对控制组目录进行授权。
+
+```bash
+sudo chown -R tianmingxing:tianmingxing /sys/fs/cgroup/cpu/cpu_cputime
+```
+
 # 限制内存
 
 同样的像下面这样设置内存最大使用量11G，这个值是由 `1024 * 1024 * 1024 * 11` 计算出来的，你可以根据需求自己调整。
