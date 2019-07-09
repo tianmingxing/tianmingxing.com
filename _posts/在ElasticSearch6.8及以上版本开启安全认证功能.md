@@ -86,7 +86,9 @@ Elastic Stack安全功能使你可以加密来自Elasticsearch集群的流量。
 
 你还可以选择在[HTTP层上启用TLS](https://www.elastic.co/guide/en/elasticsearch/reference/6.8/configuring-tls.html#tls-http)，这里就不作介绍了。
 
-### 其它组件中启用加密
+### 其它组件中启用加密（非强制）
+
+根据自己的需要配置，不配置并不影响本次启用安全认证功能。
 
 1. 配置[X-Pack监视以使用加密连接](https://www.elastic.co/guide/en/elastic-stack-overview/6.8/secure-monitoring.html)
 1. 配置[Kibana以加密浏览器和Kibana服务器之间的通信](https://www.elastic.co/guide/en/kibana/6.8/using-kibana-with-security.html)，并通过HTTPS连接到Elasticsearch。
