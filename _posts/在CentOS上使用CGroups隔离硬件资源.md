@@ -147,6 +147,16 @@ sys	0m0.001s
 sudo chown -R tianmingxing:tianmingxing /sys/fs/cgroup/cpu/cpu_cputime
 ```
 
+可以使用下面的命令检查程序是否在所需的cgroup中运行，把pid替换成真实进程编号：
+
+```bash
+$ ps -o cgroup [pid]
+CGROUP
+11:pids:/user.slice,10:devices:/user.slice,8:blkio:/user.slice,6:memory:/memory_4g,3:cpuacct,cpu:/cputime,1:name=systemd:/user.slice/user-1007.slice/session-7250.scope
+```
+
+从上面 `cpu:/cputime` 中可以看到，这个进程确实是在我们定义的cgroup中运行。
+
 # 限制内存
 
 同样的像下面这样设置内存最大使用量11G，这个值是由 `1024 * 1024 * 1024 * 11` 计算出来的，你可以根据需求自己调整。
