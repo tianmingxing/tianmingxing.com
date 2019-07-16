@@ -107,6 +107,13 @@ cpu.shares: 1024
 
 设想一下在32核CPU下，如果要限制某个进程占用8个CPU运行时间，该怎么配置呢？通过上面的例子举一反三，思考一下相信可以得出答案。
 
+| 核数 | 配置                                                         |
+| ---- | ------------------------------------------------------------ |
+| 2核  | `cgset -r cpu.cfs_quota_us=1000000 cpu_2c ` `cgset -r cpu.cfs_period_us=500000 cpu_2c` |
+| 4核  | `cgset -r cpu.cfs_quota_us=2000000 cpu_4c` `cgset -r cpu.cfs_period_us=500000 cpu_4c` |
+| 8核  | `cgset -r cpu.cfs_quota_us=4000000 cpu_8c` `cgset -r cpu.cfs_period_us=500000 cpu_8c` |
+| 16核 | `cgset -r cpu.cfs_quota_us=8000000 cpu_16c` `cgset -r cpu.cfs_period_us=500000 cpu_16c` |
+
 ## 测试程序
 
 ### 不限制资源的情况下
@@ -163,11 +170,12 @@ CGROUP
 
 
 ```bash
-sudo cgset -r memory.limit_in_bytes=11811160064 cpu_cputime
+sudo cgcreate -t tianmingxing:tianmingxing -g memory:/memory_cputime
+sudo cgset -r memory.limit_in_bytes=11811160064 memory_cputime
 
 # 如果要查询内存所有参数设置，可以使用下面的命令：
-$ cgget -g memory:cpu_cputime
-cpu_cputime:
+$ cgget -g memory:memory_cputime
+memory_cputime:
 memory.kmem.tcp.max_usage_in_bytes: 0
 memory.kmem.tcp.failcnt: 0
 memory.kmem.tcp.usage_in_bytes: 0
@@ -185,6 +193,7 @@ memory.kmem.usage_in_bytes: 0
 # 小结
 
 1. 可以通过 `top` 系统命令并查看 `%CPU` 和 `%MEM` 列确认目标进程资源是否真的被限制住了，这个百分比只表示单核，如果机器是多核就乘以核数。
+1. 如果某个控制组已经应用在一个进程上了，那再次使用该控制组将中断原先的进程，你可以通过创建多个控制组来解决这个问题。
 1. 其它资源的限制方法和上面是类似的，大家可以尝试一下，本文不再赘述。
 
 ---
