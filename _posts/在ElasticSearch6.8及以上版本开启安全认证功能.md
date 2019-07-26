@@ -46,6 +46,7 @@ Elastic Stack安全功能提供内置的用户凭据可帮助你启动运行ES�
 
 上面的内置用户存储在一个特殊 `.security` 索引中，该索引由Elasticsearch管理。如果禁用内置用户或其密码更改，则更改将自动反映在集群中的每个节点上。但是，如果从快照中删除或恢复索引，则已应用的任何更改都将丢失。
 
+1. 先创建keystore文件 `bin/elasticsearch-keystore create`。
 1. 在Elasticsearch目录中运行命令：`./bin/elasticsearch-setup-passwords interactive`，回车之后为每一个用户设置独立的密码。
 1. 你需要在后续步骤中使用这些内置用户，因此务必牢记前面设置的密码！
 
