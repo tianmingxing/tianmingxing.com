@@ -97,7 +97,7 @@ dubbo是天生为分布式应用提供支持的，不管是所谓SOA的应用，
 
 为项目维护所有服务开放接口，有调用需求的服务必须引入本项目。
 
-**`build.gradle`**
+**`build.gradle`** 本项目作为其它服务的依赖jar包，主要用来定义接口、请求和响应对象模型。
 
 ```groovy
 plugins {
@@ -112,7 +112,7 @@ dependencies {
 }
 ```
 
-**`OrderService.java`**
+**`OrderService.java`** 订单服务开放接口
 
 ```java
 package com.tianmingxing.dubbo.example.api.order;
@@ -135,7 +135,7 @@ public interface OrderService {
 }
 ```
 
-**`OrderReq.java`**
+**`OrderReq.java`** 接口请求参数封装成对象模型
 
 ```java
 package com.tianmingxing.dubbo.example.api.order;
@@ -169,7 +169,7 @@ public class OrderReq implements Serializable {
 }
 ```
 
-**`OrderGenResultResp.java`**
+**`OrderGenResultResp.java`** 响应参数模型
 
 ```java
 package com.tianmingxing.dubbo.example.api.order;
@@ -197,7 +197,7 @@ public class OrderGenResultResp implements Serializable {
 }
 ```
 
-**`UserInfoService.java`**
+**`UserInfoService.java`** 会员服务开放接口
 
 ```java
 package com.tianmingxing.dubbo.example.api.user;
@@ -286,7 +286,10 @@ public class UserInfoResp implements Serializable {
 
 ### 构建会员服务
 
-**`build.gradle`**
+**`build.gradle`** 本服务依赖dubbo、spring boot框架，下面排除了内置tomcat依赖包，这样本服务不会启动web端口，因为没有直接与前端项目对接，只需要开放dubbo的端口供服务之间调用即可。
+
+* 本项目采用dubbo协议，它由netty4提供tcp通信，使用hessian序列化传输对象，dubbo的注册中心、元数据中心均使用zookeeper。
+* 如果你想更改上面的配置，记住要添加对应的依赖包。
 
 ```groovy
 plugins {
@@ -327,7 +330,7 @@ dependencies {
 }
 ```
 
-**`application.yml`**
+**`application.yml`** 配置RPC接口采用dubbo协议，使用ZK作为注册和元数据中心。
 
 ```yaml
 spring:
@@ -348,7 +351,7 @@ dubbo:
     address: zookeeper://127.0.0.1:2181
 ```
 
-**`Application.java`**
+**`Application.java`** 添加注解 `@EnableDubbo` 以启用dubbo并初始化框架。
 
 ```java
 package com.tianmingxing.dubbo.example.user;
@@ -376,7 +379,7 @@ public class Application {
 }
 ```
 
-**`UserInfoServiceImpl.java`**
+**`UserInfoServiceImpl.java`** 服务提供者的实现，在api项目中定义了接口，在本服务中进行实现，本服务就是该接口的提供者。
 
 ```java
 package com.tianmingxing.dubbo.example.user.api;
@@ -503,7 +506,7 @@ public class Application {
 }
 ```
 
-**`OrderServiceImpl.java`**
+**`OrderServiceImpl.java`** 订单服务接口的具体实现者，也就是服务提供者。
 
 ```java
 package com.tianmingxing.dubbo.example.order.api;
@@ -539,7 +542,7 @@ public class OrderServiceImpl implements OrderService {
 
 ### 构建购物车服务
 
-**`build.gradle`**
+**`build.gradle`** 本服务没有排除掉内置tomcat的依赖，所以本服务会启动两个端口，分别是web端口用来给前端项目调用，另外dubbo端口用来在服务之间RPC调用。
 
 ```groovy
 plugins {
@@ -630,7 +633,7 @@ public class Application {
 }
 ```
 
-**`CartController.java`**
+**`CartController.java`** 因为本服务需要和前端项目对接，所以提供了HTTP接口出来，下面定义的控制器。
 
 ```java
 package com.tianmingxing.dubbo.example.cart.controller;
@@ -676,7 +679,7 @@ public class CartController {
 }
 ```
 
-**`SettlementReq.java`**
+**`SettlementReq.java`** 请求参数封装成了数据对象模型
 
 ```java
 package com.tianmingxing.dubbo.example.cart.model;
@@ -709,7 +712,7 @@ public class SettlementReq {
 }
 ```
 
-**`CommonResp.java`**
+**`CommonResp.java`** 定义了一个统一的接口返回数据结构，用来响应给客户端一个始终统一的格式。
 
 ```java
 package com.tianmingxing.dubbo.example.cart.model;
@@ -780,7 +783,7 @@ public class CommonResp<T> implements Serializable {
 }
 ```
 
-**`SettlementService.java`**
+**`SettlementService.java`** 本类中演示了RPC远程调用其它接口。
 
 ```java
 package com.tianmingxing.dubbo.example.cart.service;
