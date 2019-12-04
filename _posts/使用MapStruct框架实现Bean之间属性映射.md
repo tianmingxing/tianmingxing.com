@@ -184,7 +184,3 @@ public class CarMapperImpl implements CarMapper {
 参考文献：
 1. https://mapstruct.org/documentation/stable/reference/html
 
-
-
-
-
