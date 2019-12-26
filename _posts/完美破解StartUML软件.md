@@ -16,7 +16,7 @@ categories:
 
 ## 安装Nodejs
 
-在官方https://nodejs.org/zh-cn/上下载并安装
+在官方 https://nodejs.org/zh-cn/ 上下载并逐步安装。
 
 ## 安装asar
 
